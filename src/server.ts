@@ -6,6 +6,7 @@ import microConfig from './mikro-orm.config'
 import { ApolloServer } from 'apollo-server-express'
 import { buildSchema } from 'type-graphql'
 import { PostResolver } from './resolvers/postResolver'
+import { UserResolver } from './resolvers/userResolver'
 
 (async () => {
     const orm = await MikroORM.init(microConfig)
@@ -15,7 +16,7 @@ import { PostResolver } from './resolvers/postResolver'
 
     const apolloServer = new ApolloServer({
         schema: await buildSchema({
-            resolvers: [ PostResolver ],
+            resolvers: [ PostResolver, UserResolver ],
             validate: false
         }),
         // Context: special object that is accessible in all resolvers
