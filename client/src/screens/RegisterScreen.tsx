@@ -1,46 +1,57 @@
-import React, { useState } from 'react'
-import { Button, Form } from 'react-bootstrap'
+import React from 'react'
+import { Button, Spinner } from 'react-bootstrap'
 import FormContainer from '../components/FormContainer'
+import { useRegisterMutation } from '../generated/graphql'
+import { Form, Formik } from 'formik'
+import InputField from '../components/InputField'
+import { toErrorMap } from '../utils/toErrorMap'
+import { RouteComponentProps } from 'react-router-dom'
 
-interface registerScreenProps {
+type RegisterScreenProps = RouteComponentProps
 
-}
+const RegisterScreen: React.FC<RegisterScreenProps> = ({ history }) => {
 
-const RegisterScreen: React.FC<registerScreenProps> = () => {
-    const [username, setUsername] = useState('')
-    const [password, setPassword] = useState('')
-
-    const submitHandler = (e: React.SyntheticEvent) => {
-        e.preventDefault()
-        console.log('Register')
-    }
+    // Custom hook : graphql-codegen
+    const [, register] = useRegisterMutation()
 
     return (
         <FormContainer>
-            <Form onSubmit={submitHandler}>
-                <Form.Group controlId='username'>
-                    <Form.Label>Username</Form.Label>
-                    <Form.Control
-                        type='text' 
-                        placeholder='Enter username'
-                        value={username}
-                        onChange={e => setUsername(e.target.value)}
-                    />
-                </Form.Group>
-
-                <Form.Group controlId='password'>
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control
-                        type='password' 
-                        placeholder='Enter password'
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                    />
-                </Form.Group>
-                <Button variant='primary' type='submit'>
-                    Register
-                </Button>
-            </Form>
+            <Formik
+                initialValues={{ username: '', password: '' }}
+                onSubmit={async (values, { setErrors }) => {
+                    const response = await register(values)
+                    if(response.data?.register.errors){
+                        setErrors(toErrorMap(response.data.register.errors))
+                    } else if(response.data?.register.user){
+                        // worked
+                        history.push('/')
+                    }
+                }}
+            >
+                {({ isSubmitting }) => (
+                    <Form>
+                        <InputField
+                            name='username'
+                            placeholder='Username'
+                            label='Username'
+                        />
+                        <InputField
+                            name='password'
+                            placeholder='Password'
+                            label='Password'
+                            type='password'
+                        />
+                        <Button
+                            className='my-2'
+                            type='submit'
+                            color='primary'
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting && <Spinner className='mr-1' animation='border' size='sm' />} Register
+                        </Button>
+                    </Form>
+                )}
+            </Formik>
         </FormContainer>
     )
 }
