@@ -1,9 +1,17 @@
 import './App.css'
+import { BrowserRouter as Router, Route } from 'react-router-dom'
+import RegisterScreen from './screens/RegisterScreen'
+import { Container } from 'react-bootstrap'
 
 const App = () => {
   return (
     <div>
-      App Component
+      <Router>
+        <Container>
+          <Route component={RegisterScreen} path='/' exact/>
+          {/* <Route component={RegisterScreen} path='/register' exact/> */}
+        </Container>
+      </Router>
     </div>
   )
 }
