@@ -6,7 +6,9 @@
   "scripts": {
     "build": "tsc",
     "start": "concurrently \"tsc -w\" \"nodemon dist/server.js\"",
-    "create:migration": "mikro-orm migration:create"
+    "create:migration": "mikro-orm migration:create",
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm start\" \"npm run client\""
   },
   "author": "",
   "license": "ISC",
