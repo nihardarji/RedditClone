@@ -1,9 +1,10 @@
 import React from 'react'
 import { Button, Nav, Navbar } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import { useMeQuery } from '../generated/graphql'
+import { useLogoutMutation, useMeQuery } from '../generated/graphql'
 
 const Header: React.FC<{}> = () => {
+    const [, logout] = useLogoutMutation()
     const [{ data, fetching }] = useMeQuery()
 
     let body = null
@@ -11,7 +12,7 @@ const Header: React.FC<{}> = () => {
     // loading
     if(fetching) {
 
-        // user is not logged in
+        //  user is not logged in
     } else if(!data?.me){
         body = (
             <>
@@ -25,7 +26,7 @@ const Header: React.FC<{}> = () => {
         body = (
             <>
                 <Navbar.Text className='mx-3'>{data.me.username}</Navbar.Text>
-                <Button className='btn btn-dark nav-link'>Logout</Button>
+                <Button onClick={() => logout()} className='btn btn-dark nav-link'>Logout</Button>
             </>
         )
     }
