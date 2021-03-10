@@ -7,7 +7,7 @@ import { ApolloServer } from 'apollo-server-express'
 import { buildSchema } from 'type-graphql'
 import { PostResolver } from './resolvers/postResolver'
 import { UserResolver } from './resolvers/userResolver'
-import redis from 'redis'
+import Redis from 'ioredis'
 import session from 'express-session'
 import connectRedis from 'connect-redis'
 import { MyContext } from './types'
@@ -19,13 +19,13 @@ import { MyContext } from './types'
     const app = express()
 
     const RedisStore = connectRedis(session)
-    const redisClient = redis.createClient()
+    const redis = new Redis()
 
     app.use(
         session({
             name: COOKIE_NAME,
             store: new RedisStore({ 
-                client: redisClient,
+                client: redis,
                 disableTouch: true
             }),
             cookie: {
@@ -46,7 +46,7 @@ import { MyContext } from './types'
             validate: false
         }),
         // Context: special object that is accessible in all resolvers
-        context: ({ req, res }): MyContext => ({ em: orm.em, req, res })
+        context: ({ req, res }): MyContext => ({ em: orm.em, req, res, redis })
     })
 
     apolloServer.applyMiddleware({ app }) 
