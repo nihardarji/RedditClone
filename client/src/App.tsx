@@ -5,6 +5,8 @@ import { Container } from 'react-bootstrap'
 import MainScreen from './screens/MainScreen'
 import LoginScreen from './screens/LoginScreen'
 import Header from './components/Header'
+import ChangePasswordScreen from './screens/ChangePasswordScreen'
+import ForgotPasswordScreen from './screens/ForgotPasswordScreen'
 
 const App = () => {
   return (
@@ -15,6 +17,8 @@ const App = () => {
           <Route component={MainScreen} path='/' exact/>
           <Route component={LoginScreen} path='/login' exact/>
           <Route component={RegisterScreen} path='/register' exact/>
+          <Route component={ChangePasswordScreen} path='/change-password/:id' exact/>
+          <Route component={ForgotPasswordScreen} path='/forgot-password' exact/>
         </Container>
       </Router>
     </div>

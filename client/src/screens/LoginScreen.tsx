@@ -5,7 +5,7 @@ import { useLoginMutation } from '../generated/graphql'
 import { Form, Formik } from 'formik'
 import InputField from '../components/InputField'
 import { toErrorMap } from '../utils/toErrorMap'
-import { RouteComponentProps } from 'react-router-dom'
+import { Link, RouteComponentProps } from 'react-router-dom'
 
 type LoginScreenProps = RouteComponentProps
 
@@ -41,6 +41,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ history }) => {
                             label='Password'
                             type='password'
                         />
+                        <div className='d-flex justify-content-end'>
+                            <Link to='/forgot-password'>Forgot Password?</Link>
+                        </div>
                         <Button
                             className='my-2'
                             type='submit'
