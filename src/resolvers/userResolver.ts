@@ -73,7 +73,7 @@ export class UserResolver {
         await redis.del(key)
 
         // login user after the password change
-        req.session!.userId = user.id
+        req.session.userId = user.id
 
         return { user }
     }
@@ -105,11 +105,11 @@ export class UserResolver {
         @Ctx() { req }: MyContext
     ) {
         // not logged in
-        if(!req.session!.userId){
+        if(!req.session.userId){
             return null
         }
         
-        return  User.findOne(req.session!.userId)
+        return  User.findOne(req.session.userId)
     }
 
     @Mutation(() => UserResponse)
@@ -143,7 +143,7 @@ export class UserResolver {
             }
         }
 
-        req.session!.userId = user?.id
+        req.session.userId = user?.id
 
         return { user }
     }
@@ -179,7 +179,7 @@ export class UserResolver {
             }
         }
 
-        req.session!.userId = user.id
+        req.session.userId = user.id
 
         return { user }
     }
@@ -187,7 +187,7 @@ export class UserResolver {
     @Mutation(() => Boolean)
     logout(@Ctx() { req, res }: MyContext ) {
         return new Promise((resolve) => {
-            req.session?.destroy((err) => {
+            req.session.destroy((err) => {
                 res.clearCookie(COOKIE_NAME)
                 if(err){
                     resolve(false)

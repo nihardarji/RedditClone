@@ -9,65 +9,66 @@ export const createUrqlClient = {
       credentials: 'include' as const
     },
     exchanges: [dedupExchange, cacheExchange({
-      updates: {
-        Mutation: {
-            changePassword: (_result, _args, cache, _info) => {
-                betterUpdateQuery<ChangePasswordMutation, MeQuery>(
-                    cache,
-                    { query: MeDocument },
-                    _result,
-                    (result, query) => {
-                        if(result.changePassword.errors){
-                            return query
-                        } else {
-                            return {
-                                me: result.changePassword.user
+        updates: {
+            Mutation: {
+                changePassword: (_result, _args, cache, _info) => {
+                    betterUpdateQuery<ChangePasswordMutation, MeQuery>(
+                        cache,
+                        { query: MeDocument },
+                        _result,
+                        (result, query) => {
+                            if(result.changePassword.errors){
+                                return query
+                            } else {
+                                return {
+                                    me: result.changePassword.user
+                                }
                             }
                         }
-                    }
-                )
-            },
-            logout: (_result, _args, cache, _info) => {
-                betterUpdateQuery<LogoutMutation, MeQuery>(
-                    cache,
-                    { query: MeDocument },
-                    _result,
-                    () => ({ me: null })
-                )
-            },
-            login: (_result, _args, cache, _info) => {
-                betterUpdateQuery<LoginMutation, MeQuery>(
-                    cache,
-                    { query: MeDocument },
-                    _result,
-                    (result, query) => {
-                        if(result.login.errors){
-                            return query
-                        } else {
-                            return {
-                                me: result.login.user
+                    )
+                },
+                logout: (_result, _args, cache, _info) => {
+                    betterUpdateQuery<LogoutMutation, MeQuery>(
+                        cache,
+                        { query: MeDocument },
+                        _result,
+                        () => ({ me: null })
+                    )
+                },
+                login: (_result, _args, cache, _info) => {
+                    betterUpdateQuery<LoginMutation, MeQuery>(
+                        cache,
+                        { query: MeDocument },
+                        _result,
+                        (result, query) => {
+                            if(result.login.errors){
+                                return query
+                            } else {
+                                return {
+                                    me: result.login.user
+                                }
                             }
                         }
-                    }
-                )
-            },
-            register: (_result, _args, cache, _info) => {
-                betterUpdateQuery<RegisterMutation, MeQuery>(
-                    cache,
-                    { query: MeDocument },
-                    _result,
-                    (result, query) => {
-                        if(result.register.errors){
-                        return query
-                        } else {
-                        return {
-                            me: result.register.user
+                    )
+                },
+                register: (_result, _args, cache, _info) => {
+                    betterUpdateQuery<RegisterMutation, MeQuery>(
+                        cache,
+                        { query: MeDocument },
+                        _result,
+                        (result, query) => {
+                            if(result.register.errors){
+                            return query
+                            } else {
+                            return {
+                                me: result.register.user
+                            }
+                            }
                         }
-                        }
-                    }
-                )
+                    )
+                }
             }
         }
-    }
-}), fetchExchange]
-}
+    }),
+    fetchExchange
+]}
