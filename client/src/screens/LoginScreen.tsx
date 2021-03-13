@@ -9,10 +9,12 @@ import { Link, RouteComponentProps } from 'react-router-dom'
 
 type LoginScreenProps = RouteComponentProps
 
-const LoginScreen: React.FC<LoginScreenProps> = ({ history }) => {
+const LoginScreen: React.FC<LoginScreenProps> = ({ history, location }) => {
 
     // Custom hook : graphql-codegen
     const [, login] = useLoginMutation()
+
+    const next = new URLSearchParams(location.search).get('next')
 
     return (
         <FormContainer>
@@ -24,7 +26,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ history }) => {
                         setErrors(toErrorMap(response.data.login.errors))
                     } else if(response.data?.login.user){
                         // worked
-                        history.push('/')
+                        if(next){
+                            history.push(next)
+                        } else {
+                            history.push('/')
+                        }
                     }
                 }}
             >

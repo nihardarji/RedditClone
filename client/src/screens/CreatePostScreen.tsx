@@ -12,11 +12,13 @@ interface CreatePostScreenType extends RouteComponentProps<RouteParams>{}
 const CreatePostScreen: React.FC<CreatePostScreenType> = ({ history }) => {
     const [{ data, fetching }] = useMeQuery()
     const [, createPost] = useCreatePostMutation()
+
     useEffect(() => {
         if(!fetching && !data?.me){
-            history.replace('/login')
+            history.replace('/login?next=' + history.location.pathname)
         }
     }, [data, history, fetching])
+
     return (
         <FormContainer>
             <Formik
