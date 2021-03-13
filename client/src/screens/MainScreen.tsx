@@ -23,7 +23,7 @@ const MainScreen: React.FC<MainScreenProps> = () => {
             ? 
                 <ProgressBar now={100} animated /> 
             : 
-                data!.posts.map(p => (
+                data!.posts.posts.map(p => (
                     <Card key={p.id} className='my-4'>
                         <Card.Body>
                             <Card.Title>{p.title}</Card.Title>
@@ -32,7 +32,7 @@ const MainScreen: React.FC<MainScreenProps> = () => {
                         </Card.Body>
                     </Card>
             ))}
-            {data && <div className='d-flex justify-content-center'>
+            {data && data.posts.hasMore && <div className='d-flex justify-content-center'>
                 <Button
                     className='my-2'
                     type='submit'
@@ -41,7 +41,7 @@ const MainScreen: React.FC<MainScreenProps> = () => {
                     onClick={() => {
                         setVariables({
                             limit: variables.limit,
-                            cursor: data.posts[data.posts.length - 1].createdAt
+                            cursor: data.posts.posts[data.posts.posts.length - 1].createdAt
                         })
                     }}
                 >
