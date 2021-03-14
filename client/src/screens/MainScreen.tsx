@@ -1,13 +1,15 @@
 import React, { useState } from 'react'
-import { Button, Card, ProgressBar, Spinner } from 'react-bootstrap'
+import { Button, ProgressBar, Spinner } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
+import PostItem from '../components/PostItem'
 import { usePostsQuery } from '../generated/graphql'
+import { PAGINATION_LIMIT } from '../utils/constants'
 
 interface MainScreenProps {}
 
 const MainScreen: React.FC<MainScreenProps> = () => {
     const [variables, setVariables] = useState({
-        limit: 10,
+        limit: PAGINATION_LIMIT,
         cursor: null as null | string
     })
 
@@ -23,15 +25,8 @@ const MainScreen: React.FC<MainScreenProps> = () => {
             ? 
                 <ProgressBar now={100} animated /> 
             : 
-                data!.posts.posts.map(p => (
-                    <Card key={p.id} className='my-4'>
-                        <Card.Body>
-                            <Card.Title>{p.title}</Card.Title>
-                            {/* <Card.Subtitle className="mb-2 text-muted">Card Subtitle</Card.Subtitle> */}
-                            <Card.Text>{p.textSnippet}</Card.Text>
-                        </Card.Body>
-                    </Card>
-            ))}
+                data!.posts.posts.map(p => <PostItem key={p.id} post={p} />)
+            }
             {data && data.posts.hasMore && <div className='d-flex justify-content-center'>
                 <Button
                     className='my-2'

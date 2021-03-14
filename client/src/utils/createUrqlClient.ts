@@ -6,10 +6,8 @@ import { betterUpdateQuery } from './betterUpdateQuery'
 const cursorPagination = (): Resolver => {
     return (_parent, fieldArgs, cache, info) => {
         const { parentKey: entityKey, fieldName } = info
-        // console.log(entityKey, fieldName)
 
         const allFields = cache.inspectFields(entityKey)
-        // console.log('allFields',allFields)
 
         const fieldInfos = allFields.filter(info => info.fieldName === fieldName)
         const size = fieldInfos.length
@@ -61,6 +59,15 @@ export const createUrqlClient = {
         },
         updates: {
             Mutation: {
+                createPost: (_result, _args, cache, _info) => {
+                    // invalidating specific query
+                    const allFields = cache.inspectFields("Query")
+
+                    const fieldInfos = allFields.filter(info => info.fieldName === 'posts')
+                    fieldInfos.forEach(fi => {
+                        cache.invalidate('Query', 'posts', fi.arguments || {})
+                    })
+                },
                 changePassword: (_result, _args, cache, _info) => {
                     betterUpdateQuery<ChangePasswordMutation, MeQuery>(
                         cache,
