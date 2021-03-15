@@ -33,7 +33,7 @@ const Header: React.FC<{}> = () => {
     }
 
     return (
-        <Navbar sticky="top" collapseOnSelect expand="lg" bg="dark" variant="dark">
+        <Navbar sticky="top" collapseOnSelect expand="sm" bg="dark" variant="dark">
             <Link to='/' className='navbar-brand'>Reddit Clone</Link>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav">

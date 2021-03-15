@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Button, Card, Col, Row, Spinner } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
-import { PostSnippetFragment, useVoteMutation } from '../generated/graphql'
+import { PostSnippetFragment, useDeletePostMutation, useMeQuery, useVoteMutation } from '../generated/graphql'
 
 interface PostItemProps {
     post: PostSnippetFragment
@@ -11,7 +11,9 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
     const [isLoading, setIsLoading] = useState<'upvote-loading' | 'downvote-loading' | 'not-loading'>('not-loading')
     const { points, creator, title, textSnippet, id } = post
 
+    const [{ data }] = useMeQuery()
     const [, vote] = useVoteMutation()
+    const [, deletePost] = useDeletePostMutation()
 
     return (
         <Card className='my-4'>
@@ -68,11 +70,28 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
                         </span>
                     </Col>
                     <Col xs={11}>
-                        <Link to={`/post/${id}`} className='card-title text-white lead'>{title}</Link>
-                        <Card.Subtitle className="mb-3 mt-1">
-                            <span className='text-muted'>posted by</span> {creator.username}
-                        </Card.Subtitle>
-                        <Card.Text>{textSnippet}</Card.Text>
+                        <div className='d-flex justify-content-between'>
+                            <div className='flex-grow-1'>
+                                <Link to={`/post/${id}`} className='card-title text-white lead'>{title}</Link>
+                                <Card.Subtitle className="mb-3 mt-1">
+                                    <span className='text-muted'>posted by</span> {creator.username}
+                                </Card.Subtitle>
+                                <Card.Text>{textSnippet}</Card.Text>
+                            </div>
+                            {data?.me?.id === post.creator.id && 
+                                <div className='d-flex flex-column justify-content-around'>
+                                    <Link className='btn btn btn-primary' to={`/post/edit/${post.id}`}>
+                                        <i className="far fa-edit"></i>
+                                    </Link>
+                                    <Button
+                                        variant='danger'
+                                        onClick={() => deletePost({ id: post.id })}
+                                    >
+                                        <i className="fas fa-trash-alt"></i>
+                                    </Button>
+                                </div>
+                            }
+                        </div>
                     </Col>
                 </Row>
             </Card.Body>

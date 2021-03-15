@@ -23,7 +23,7 @@ const MainScreen: React.FC<MainScreenProps> = () => {
             ? 
                 <ProgressBar now={100} animated /> 
             : 
-                data!.posts.posts.map(p => <PostItem key={p.id} post={p} />)
+                data!.posts.posts.map(p => p && <PostItem key={p.id} post={p} />)
             }
             {data && data.posts.hasMore && <div className='d-flex justify-content-center'>
                 <Button

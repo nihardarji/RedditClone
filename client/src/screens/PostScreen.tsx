@@ -1,6 +1,6 @@
 import React from 'react'
 import { ProgressBar } from 'react-bootstrap'
-import { RouteComponentProps } from 'react-router-dom'
+import { Link, RouteComponentProps } from 'react-router-dom'
 import { usePostQuery } from '../generated/graphql'
 
 interface RouteParams { id: string }
@@ -19,10 +19,13 @@ const PostScreen: React.FC<PostScreenProps> = ({ match }) => {
     }
 
     if(!data?.post){
-        return <h4>No post found</h4>
+        return (
+            <h4>No post found</h4>
+        )
     }
     return (
         <>
+            <Link to='/' className='btn btn-secondary my-2'>Back</Link>
             <h3>{data.post.title}</h3>
             {data.post.text}
         </>

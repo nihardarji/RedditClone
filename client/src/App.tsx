@@ -9,6 +9,7 @@ import ChangePasswordScreen from './screens/ChangePasswordScreen'
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen'
 import CreatePostScreen from './screens/CreatePostScreen'
 import PostScreen from './screens/PostScreen'
+import EditPostScreen from './screens/EditPostScreen'
 
 const App = () => {
   return (
@@ -23,6 +24,7 @@ const App = () => {
           <Route component={ForgotPasswordScreen} path='/forgot-password' exact/>
           <Route component={CreatePostScreen} path='/create-post' exact/>
           <Route component={PostScreen} path='/post/:id' exact/>
+          <Route component={EditPostScreen} path='/post/edit/:id' exact/>
         </Container>
       </Router>
     </div>
