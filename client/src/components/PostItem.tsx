@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Button, Card, Col, Row, Spinner } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
 import { PostSnippetFragment, useVoteMutation } from '../generated/graphql'
 
 interface PostItemProps {
@@ -8,7 +9,7 @@ interface PostItemProps {
 
 const PostItem: React.FC<PostItemProps> = ({ post }) => {
     const [isLoading, setIsLoading] = useState<'upvote-loading' | 'downvote-loading' | 'not-loading'>('not-loading')
-    const { points, creator, title, textSnippet } = post
+    const { points, creator, title, textSnippet, id } = post
 
     const [, vote] = useVoteMutation()
 
@@ -30,7 +31,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
                                     })
                                     setIsLoading('not-loading')
                                 }}
-                                variant={post.voteStatus === 1 ? "outline-success" : undefined}
+                                variant={post.voteStatus === 1 ? "outline-success" : 'outline-primary'}
                                 className='btn-sm mb-1'
                                 disabled={isLoading === 'upvote-loading'}
                             >
@@ -55,7 +56,7 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
                                     })
                                     setIsLoading('not-loading')
                                 }}
-                                variant={post.voteStatus === -1 ? "outline-danger" : undefined}
+                                variant={post.voteStatus === -1 ? "outline-danger" : 'outline-primary'}
                                 className='mt-1 btn-sm'
                                 disabled={isLoading === 'downvote-loading'}
                             >
@@ -67,8 +68,8 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
                         </span>
                     </Col>
                     <Col xs={11}>
-                        <Card.Title>{title}</Card.Title>
-                        <Card.Subtitle className="mb-3">
+                        <Link to={`/post/${id}`} className='card-title text-white lead'>{title}</Link>
+                        <Card.Subtitle className="mb-3 mt-1">
                             <span className='text-muted'>posted by</span> {creator.username}
                         </Card.Subtitle>
                         <Card.Text>{textSnippet}</Card.Text>

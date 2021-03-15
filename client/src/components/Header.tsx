@@ -26,6 +26,7 @@ const Header: React.FC<{}> = () => {
         body = (
             <>
                 <Navbar.Text className='mx-3'>{data.me.username}</Navbar.Text>
+                <Link to='/create-post' className='btn btn-dark nav-link'>Create Post</Link>
                 <Button onClick={() => logout()} className='btn btn-dark nav-link'>Logout</Button>
             </>
         )

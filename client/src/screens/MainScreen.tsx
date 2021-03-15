@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Button, ProgressBar, Spinner } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
 import PostItem from '../components/PostItem'
 import { usePostsQuery } from '../generated/graphql'
 import { PAGINATION_LIMIT } from '../utils/constants'
@@ -20,7 +19,6 @@ const MainScreen: React.FC<MainScreenProps> = () => {
     }
     return (
         <>
-            <Link to='create-post'>Create Post</Link>
             {!data && fetching 
             ? 
                 <ProgressBar now={100} animated /> 

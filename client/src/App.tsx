@@ -8,6 +8,7 @@ import Header from './components/Header'
 import ChangePasswordScreen from './screens/ChangePasswordScreen'
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen'
 import CreatePostScreen from './screens/CreatePostScreen'
+import PostScreen from './screens/PostScreen'
 
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
           <Route component={ChangePasswordScreen} path='/change-password/:id' exact/>
           <Route component={ForgotPasswordScreen} path='/forgot-password' exact/>
           <Route component={CreatePostScreen} path='/create-post' exact/>
+          <Route component={PostScreen} path='/post/:id' exact/>
         </Container>
       </Router>
     </div>
