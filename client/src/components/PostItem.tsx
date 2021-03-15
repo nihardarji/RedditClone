@@ -85,7 +85,11 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
                                     </Link>
                                     <Button
                                         variant='danger'
-                                        onClick={() => deletePost({ id: post.id })}
+                                        onClick={() => {
+                                            if(window.confirm('Are you sure?')){
+                                                deletePost({ id: post.id })
+                                            }
+                                        }}
                                     >
                                         <i className="fas fa-trash-alt"></i>
                                     </Button>

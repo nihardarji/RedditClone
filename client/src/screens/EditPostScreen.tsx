@@ -31,40 +31,43 @@ const EditPostScreen: React.FC<EditPostScreenProps> = ({ match, history }) => {
     }
 
     return (
-        <FormContainer>
-            <Formik
-                initialValues={{ title: data.post.title, text: data.post.text }}
-                onSubmit={async (values) => {
-                    await updatePost({ id: intId, ...values})
-                    history.push('/')
-                }}
-            >
-                {({ isSubmitting }) => (
-                    <Form>
-                        <InputField
-                            name='title'
-                            placeholder='Title'
-                            label='Title'
-                        />
-                        <InputField
-                            name='text'
-                            placeholder='Enter body...'
-                            label='Body'
-                            textarea
-                        />
-                        <Button
-                            className='my-2'
-                            type='submit'
-                            color='primary'
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting && <Spinner className='mr-1' animation='border' size='sm' />}
-                            Update Post
-                        </Button>
-                    </Form>
-                )}
-            </Formik>
-        </FormContainer>
+        <>
+            <Button variant='secondary' className='my-2' onClick={() => history.goBack()}>Back</Button>
+            <FormContainer>
+                <Formik
+                    initialValues={{ title: data.post.title, text: data.post.text }}
+                    onSubmit={async (values) => {
+                        await updatePost({ id: intId, ...values})
+                        history.goBack()
+                    }}
+                >
+                    {({ isSubmitting }) => (
+                        <Form>
+                            <InputField
+                                name='title'
+                                placeholder='Title'
+                                label='Title'
+                            />
+                            <InputField
+                                name='text'
+                                placeholder='Enter body...'
+                                label='Body'
+                                textarea
+                            />
+                            <Button
+                                className='my-2'
+                                type='submit'
+                                color='primary'
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting && <Spinner className='mr-1' animation='border' size='sm' />}
+                                Update Post
+                            </Button>
+                        </Form>
+                    )}
+                </Formik>
+            </FormContainer>
+        </>
     )
 }
 
