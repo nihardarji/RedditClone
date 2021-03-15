@@ -1,7 +1,8 @@
 import { dedupExchange, fetchExchange, stringifyVariables } from 'urql'
 import { cacheExchange, Resolver } from '@urql/exchange-graphcache'
-import { ChangePasswordMutation, LoginMutation, LogoutMutation, MeDocument, MeQuery, RegisterMutation } from '../generated/graphql'
+import { ChangePasswordMutation, LoginMutation, LogoutMutation, MeDocument, MeQuery, RegisterMutation, VoteMutationVariables } from '../generated/graphql'
 import { betterUpdateQuery } from './betterUpdateQuery'
+import gql from 'graphql-tag'
 
 const cursorPagination = (): Resolver => {
     return (_parent, fieldArgs, cache, info) => {
@@ -59,6 +60,35 @@ export const createUrqlClient = {
         },
         updates: {
             Mutation: {
+                vote: (_result, args, cache, _info) => {
+                    const { postId, value } = args as VoteMutationVariables
+                    const data = cache.readFragment(
+                        gql`
+                            fragment _ on Post {
+                                id
+                                points
+                                voteStatus
+                            }
+                        `,
+                        { id: postId } as any
+                    )
+
+                    if(data) {
+                        if(data.voteStatus === value) {
+                            return
+                        }
+                        const newPoints = (data.points as number) + ((!data.voteStatus ? 1 : 2) * value)
+                        cache.writeFragment(
+                            gql`
+                                fragment __ on Post {
+                                    points
+                                    voteStatus
+                                }
+                            `,
+                            { id: postId, points: newPoints, voteStatus: value } as any
+                        )
+                    }
+                },
                 createPost: (_result, _args, cache, _info) => {
                     // invalidating specific query
                     const allFields = cache.inspectFields("Query")

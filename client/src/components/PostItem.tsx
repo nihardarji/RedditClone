@@ -20,14 +20,18 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
                         <span>
                             <Button 
                                 onClick={async () => {
+                                    if(post.voteStatus === 1) {
+                                        return
+                                    }
                                     setIsLoading('upvote-loading')
                                     await vote({
                                         postId: post.id,
                                         value: 1
                                     })
                                     setIsLoading('not-loading')
-                                }} 
-                                className='btn btn-sm mb-1'
+                                }}
+                                variant={post.voteStatus === 1 ? "outline-success" : undefined}
+                                className='btn-sm mb-1'
                                 disabled={isLoading === 'upvote-loading'}
                             >
                                 {isLoading === 'upvote-loading' ? 
@@ -41,6 +45,9 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
                         <span>
                             <Button
                                 onClick={async () => {
+                                    if(post.voteStatus === -1) {
+                                        return
+                                    }
                                     setIsLoading('downvote-loading')
                                     await vote({
                                         postId: post.id,
@@ -48,7 +55,8 @@ const PostItem: React.FC<PostItemProps> = ({ post }) => {
                                     })
                                     setIsLoading('not-loading')
                                 }}
-                                className='btn btn-sm mt-1'
+                                variant={post.voteStatus === -1 ? "outline-danger" : undefined}
+                                className='mt-1 btn-sm'
                                 disabled={isLoading === 'downvote-loading'}
                             >
                                 {isLoading === 'downvote-loading' ? 

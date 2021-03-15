@@ -3,6 +3,7 @@ import { Arg, Ctx, Field, FieldResolver, InputType, Int, Mutation, ObjectType, Q
 import { MyContext } from '../types'
 import { isAuth } from '../middleware/isAuth'
 import { getConnection } from 'typeorm'
+import { Updoot } from '../entities/Updoot'
 
 @InputType()
 class PostInput {
@@ -37,31 +38,56 @@ export class PostResolver {
         const isUpdoot = value !== -1
         const realValue = isUpdoot ? 1 : -1
         const { userId } = req.session
+        
+        const vote = await Updoot.findOne({ where: { postId, userId }})
 
-        // transaction
-        await getConnection().query(`
-            START TRANSACTION;
-            insert into updoot ("userId", "postId", value)
-            values (${userId}, ${postId}, ${realValue});
-            update post
-            set points = points + ${realValue}
-            where id = ${postId};
-            COMMIT;
-        `)
+        if(vote && vote.value !== realValue){
+            await getConnection().transaction(async tm => {
+                await tm.query(`
+                    update updoot
+                    set value = $1
+                    where "postId" = $2 and "userId" = $3
+                `, [realValue, postId, userId])
+                await tm.query(`
+                    update post
+                    set points = points + $1
+                    where id = $2
+                `, [2 * realValue, postId])
+            })
+        } else if(!vote) {
+            await getConnection().transaction(async tm => {
+                await tm.query(`
+                    insert into updoot ("userId", "postId", value)
+                    values ($1, $2, $3)
+                `, [userId, postId, realValue])
+                await tm.query(`
+                    update post
+                    set points = points + $1
+                    where id = $2
+                `, [realValue, postId])
+            })
+        }
         return true
     }
 
     @Query(() => PaginatedPosts)
     async posts(
         @Arg('limit', () => Int) limit: number,
-        @Arg('cursor', () => String, { nullable: true }) cursor: string | null
+        @Arg('cursor', () => String, { nullable: true }) cursor: string | null,
+        @Ctx() { req }: MyContext
     ): Promise<PaginatedPosts> {
         const realLimit = Math.min(50, limit)
         const realLimitPlusOne = realLimit + 1
 
-        const replacement: any = [realLimitPlusOne]
+        const replacement: any[] = [realLimitPlusOne]
+
+        if(req.session.userId) {
+            replacement.push(req.session.userId)
+        }
+        let cursorIndex = 3
         if(cursor) {
             replacement.push(new Date(parseInt(cursor)))
+            cursorIndex = replacement.length
         }
 
         const posts = await getConnection().query(`
@@ -72,10 +98,15 @@ export class PostResolver {
                 'username', u.username,
                 'createdAt', u."createdAt",
                 'updatedAt', u."updatedAt"
-            ) creator
+            ) creator,
+            ${
+                req.session.userId 
+                ? '(select value from updoot where "userId" = $2 and "postId" = p.id) "voteStatus"' 
+                : 'null as "voteStatus"'
+            }
             from post p
             inner join public.user u on u.id = p."creatorId"
-            ${cursor ? `where p."createdAt" < $2` : ''}
+            ${cursor ? `where p."createdAt" < $${cursorIndex}` : ''}
             order by p."createdAt" DESC
             limit $1
         `, replacement)
