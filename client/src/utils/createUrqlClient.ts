@@ -1,8 +1,17 @@
 import { dedupExchange, fetchExchange, stringifyVariables } from 'urql'
-import { cacheExchange, Resolver } from '@urql/exchange-graphcache'
+import { Cache, cacheExchange, Resolver } from '@urql/exchange-graphcache'
 import { ChangePasswordMutation, DeletePostMutationVariables, LoginMutation, LogoutMutation, MeDocument, MeQuery, RegisterMutation, VoteMutationVariables } from '../generated/graphql'
 import { betterUpdateQuery } from './betterUpdateQuery'
 import gql from 'graphql-tag'
+
+const invalidatePosts = (cache: Cache) => {
+    const allFields = cache.inspectFields("Query")
+
+    const fieldInfos = allFields.filter(info => info.fieldName === 'posts')
+    fieldInfos.forEach(fi => {
+        cache.invalidate('Query', 'posts', fi.arguments || {})
+    })
+}
 
 const cursorPagination = (): Resolver => {
     return (_parent, fieldArgs, cache, info) => {
@@ -97,12 +106,7 @@ export const createUrqlClient = {
                 },
                 createPost: (_result, _args, cache, _info) => {
                     // invalidating specific query
-                    const allFields = cache.inspectFields("Query")
-
-                    const fieldInfos = allFields.filter(info => info.fieldName === 'posts')
-                    fieldInfos.forEach(fi => {
-                        cache.invalidate('Query', 'posts', fi.arguments || {})
-                    })
+                    invalidatePosts(cache)
                 },
                 changePassword: (_result, _args, cache, _info) => {
                     betterUpdateQuery<ChangePasswordMutation, MeQuery>(
@@ -127,6 +131,7 @@ export const createUrqlClient = {
                         _result,
                         () => ({ me: null })
                     )
+                    invalidatePosts(cache)
                 },
                 login: (_result, _args, cache, _info) => {
                     betterUpdateQuery<LoginMutation, MeQuery>(
@@ -143,6 +148,7 @@ export const createUrqlClient = {
                             }
                         }
                     )
+                    invalidatePosts(cache)
                 },
                 register: (_result, _args, cache, _info) => {
                     betterUpdateQuery<RegisterMutation, MeQuery>(
